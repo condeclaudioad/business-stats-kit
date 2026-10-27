@@ -12,13 +12,18 @@ Necesitás Git, Node.js 22.22 o superior compatible (también podés usar Node.j
 
 ```bash
 npm ci
-cp .env.example .env.local
+npm run demo:setup
+npm run doctor
 npm run dev
 ```
 
-Abrí [http://localhost:4321](http://localhost:4321). `.env.example` selecciona `APP_MODE=demo`: los datos son sintéticos y no se consulta ninguna cuenta real. Podés cambiar entre Studio, Editorial y Terminal sin cambiar las métricas.
+Abrí [http://localhost:4321](http://localhost:4321). `demo:setup` crea `.env.local` desde el ejemplo y conserva cualquier archivo existente. Revisá la salida de `doctor`; no reemplaza variables de una instalación real. El ejemplo selecciona `APP_MODE=demo`: los datos son sintéticos y no se consulta ninguna cuenta real. Podés cambiar entre Studio, Editorial y Terminal sin cambiar las métricas.
 
 Si el cliente Git no conserva enlaces simbólicos, Claude puede leer las skills directamente desde `.agents/skills/`. No hace falta instalar nada globalmente.
+
+## Abrir la clase
+
+En otra terminal, ejecutá `npm run class:serve` y abrí [http://127.0.0.1:4324](http://127.0.0.1:4324). El material está en [class/](class/README.md), con presentación y notas. El servidor es local y no publica la clase en internet.
 
 ## Pedile al agente que te guíe
 
@@ -49,14 +54,16 @@ La fuente común es `.agents/skills/`; `.claude/skills/` la enlaza para Claude C
 ## Pasar a tus datos
 
 1. Completá `business.config.ts`: nombre, moneda, zona horaria, productos Stripe y scope de campañas Meta.
-2. Prepará un Postgres dedicado. Configurá `DATABASE_URL`, `APP_MODE=live` y `APP_ORIGIN` del lado servidor.
-3. Seguí [la guía de acceso](docs/security.md): `npm run auth:setup`, alta inicial con token privado y registro de passkey en `/login`.
-4. Conectá una fuente por vez con [la guía de integraciones](docs/integrations.md). Producto/email usan `db/analytics.sql` y `npm run data:import -- archivo.json`.
+2. Prepará un Postgres dedicado. Configurá `DATABASE_URL`, `APP_MODE=live` y `APP_ORIGIN` del lado servidor; ejecutá `npm run doctor` y `npm run db:setup` para preparar eventos/cobertura.
+3. Seguí [la guía de acceso](docs/security.md): `npm run auth:setup`, alta inicial con token privado y registro de passkey en `/login`. Después, `npm run doctor -- --database` comprueba esquema y dueño por lectura.
+4. Conectá una fuente por vez con [la guía de integraciones](docs/integrations.md). Producto/email usan `npm run data:import -- archivo.json`; cada archivo debe declarar `coverage: {from, to}` para una ventana completa exportada.
 5. Conciliá un día cerrado contra el origen y completá [las pruebas previas a publicar](docs/security.md#antes-y-después-de-publicar).
 
 No cambies a modo real solo para quitar la etiqueta de demo. Sin configuración válida se bloquea. Guardá las claves en `.env.local` o en el gestor de secretos del hosting; nunca en archivos públicos, prompts o commits.
 
 ## Verificar
+
+Estado de la v0.2: verificación final pendiente de completar y registrar en [verification.md](docs/verification.md). Los resultados históricos de la v0.1 no certifican esta revisión.
 
 ```bash
 npm test
@@ -73,10 +80,14 @@ El build no prueba el login en tu teléfono ni los permisos de tus cuentas. La v
 - `business.config.ts`: alcance del negocio, sin secretos.
 - `app/`: interfaz y rutas HTTP.
 - `lib/auth/` + `sql/auth.sql`: acceso y persistencia privada.
-- `lib/connectors.ts`: consultas de lectura a proveedores.
+- `lib/connectors.ts` + `lib/provider-connectors.ts`: caché y consultas de lectura a proveedores.
 - `db/analytics.sql` + `scripts/import-data.ts`: contrato de eventos importados.
 - `tests/`: casos de seguridad y métricas.
 - [Clase paso a paso](docs/class.md), [definiciones de métricas](docs/metrics.md), [integraciones](docs/integrations.md), [seguridad y recuperación](docs/security.md), [referencias evaluadas](docs/research.md).
+
+## Frescura y cobertura
+
+Producto/email distinguen última carga (`updatedAt`) de hasta cuándo hay datos (`dataThrough`). Intervalos declarados se unen: si falta el inicio o hay huecos, los totales quedan en `—`; si la cobertura es continua pero el corte tiene más de 24 horas, se advierte antigüedad. Declarar cobertura no prueba instrumentación completa. Stripe/Meta reutilizan lecturas durante 60 segundos por proceso; Actualizar no promete saltarse esa caché.
 
 ## Publicación y mantenimiento
 

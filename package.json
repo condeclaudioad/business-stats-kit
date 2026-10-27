@@ -1,6 +1,6 @@
 {
   "name": "business-stats-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev -H 127.0.0.1 -p 4321",
@@ -10,7 +10,11 @@
     "test": "tsx --test tests/*.test.ts",
     "auth:setup": "node scripts/auth-setup.mjs",
     "data:import": "tsx --env-file=.env.local scripts/import-data.ts",
-    "data:sync:posthog": "tsx --env-file=.env.local scripts/sync-posthog.ts"
+    "data:sync:posthog": "tsx --env-file=.env.local scripts/sync-posthog.ts",
+    "doctor": "tsx scripts/doctor.ts",
+    "demo:setup": "node scripts/demo-setup.mjs",
+    "db:setup": "node scripts/setup-database.mjs",
+    "class:serve": "node scripts/serve-class.mjs"
   },
   "dependencies": {
     "@simplewebauthn/browser": "14.0.0",

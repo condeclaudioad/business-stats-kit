@@ -51,19 +51,27 @@ export async function getDashboard(days: number): Promise<Dashboard> {
     source("Email", () => eventMetrics(days, "email")),
   ]);
   if (s) {
+    sources.find(x=>x.name==="Stripe")!.updatedAt=s.readAt;
     sources.find((x) => x.name === "Stripe")!.detail =
       `Solo facturas y suscripciones del catálogo. ${s.excluded} facturas fuera de alcance. No incluye pagos sin factura, reembolsos ni comisiones.`;
   }
+  if(m) sources.find(x=>x.name==="Meta Ads")!.updatedAt=m.readAt;
+  const product=p?.coverage.complete?p:null, email=e?.coverage.complete?e:null;
   if (p) {
     sources.find((x) => x.name === "Producto")!.updatedAt = p.at;
     sources.find((x) => x.name === "Producto")!.detail =
-      "Última carga de eventos. La cobertura depende de tu instrumentación.";
+      p.coverage.reason;
+    sources.find(x=>x.name==="Producto")!.dataThrough=p.coverage.asOf;
+    if(!p.coverage.complete||p.coverage.stale)sources.find(x=>x.name==="Producto")!.state="partial";
   }
   if (e) {
     sources.find((x) => x.name === "Email")!.updatedAt = e.at;
     sources.find((x) => x.name === "Email")!.detail =
-      "Última carga de eventos. Clics de mensajes entregados dentro del período.";
+      e.coverage.reason;
+    sources.find(x=>x.name==="Email")!.dataThrough=e.coverage.asOf;
+    if(!e.coverage.complete||e.coverage.stale)sources.find(x=>x.name==="Email")!.state="partial";
   }
+  sources.sort((a,b)=>["Stripe","Meta Ads","Producto","Email"].indexOf(a.name)-["Stripe","Meta Ads","Producto","Email"].indexOf(b.name));
   const r = rangeForDays(days, new Date(), business.timezone);
   return {
     business: business.name,
@@ -115,20 +123,20 @@ export async function getDashboard(days: number): Promise<Dashboard> {
     ],
     product: [
       metric(
-        "Usuarios activos",
-        p?.active ?? null,
+        "IDs activos",
+        product?.active ?? null,
         "number",
-        "subject_id únicos con product.activated en el período.",
+        "IDs pseudónimos únicos con product.activated hasta el corte. Varias identidades de una persona pueden contar más de una vez; definí una identidad canónica antes de llamarlos usuarios.",
       ),
       metric(
         "Acciones de valor",
-        p?.actions ?? null,
+        product?.actions ?? null,
         "number",
         "Cantidad de eventos product.activated. Definí qué acción expresa valor.",
       ),
       metric(
         "Tasa de fallos",
-        p ? ratio(p.failed, p.actions + p.failed) : null,
+        product ? ratio(product.failed, product.actions + product.failed) : null,
         "percent",
         "product.failed / (product.activated + product.failed).",
       ),
@@ -136,19 +144,19 @@ export async function getDashboard(days: number): Promise<Dashboard> {
     email: [
       metric(
         "Emails entregados",
-        e?.delivered ?? null,
+        email?.delivered ?? null,
         "number",
         "Mensajes únicos cuyo primer email.delivered cae en el período.",
       ),
       metric(
         "Mensajes con clic",
-        e?.clicked ?? null,
+        email?.clicked ?? null,
         "number",
         "Mensajes de esa cohorte con email.clicked posterior a entrega y antes del cierre.",
       ),
       metric(
         "Click rate",
-        e ? ratio(e.clicked, e.delivered) : null,
+        email ? ratio(email.clicked, email.delivered) : null,
         "percent",
         "Mensajes con clic / entregados de la misma cohorte. Los bloqueadores y bots limitan la señal.",
       ),

@@ -65,7 +65,7 @@ export function demoDashboard(days: number): Dashboard {
     ],
     product: [
       metric(
-        "Usuarios activos",
+        "IDs activos",
         Math.round(days * 12.8),
         "number",
         "Usuarios únicos con al menos un evento de valor product.activated en el período.",

@@ -69,7 +69,7 @@ function format(m: Metric, currency: string) {
   if (m.value === null) return "—";
   return new Intl.NumberFormat("es-AR", {
     maximumFractionDigits:
-      m.unit === "money" ? 0 : m.unit === "percent" ? 1 : 2,
+      m.unit === "money" ? 2 : m.unit === "percent" ? 1 : 2,
     ...(m.unit === "money" ? { style: "currency", currency } : {}),
     ...(m.unit === "percent" ? { style: "unit", unit: "percent" } : {}),
   }).format(m.value);
@@ -243,9 +243,9 @@ export default function Dashboard() {
             className={loading ? "content updating" : "content"}
           >
             <p className="period">
-              {data.from} → {data.to}{" "}
+              {data.from} → {new Date(Date.parse(data.to+"T00:00:00Z")-86400000).toISOString().slice(0,10)}{" "}
               <span>
-                Fin exclusivo · {data.timezone} · {data.currency}
+                {data.timezone} · {data.currency}
               </span>
             </p>
             <section className="metric-grid" aria-label="Métricas principales">
@@ -438,10 +438,13 @@ export default function Dashboard() {
                     <span>
                       {source.state === "ready"
                         ? "Disponible"
-                        : source.state === "missing"
+                        : source.state === "partial"
+                            ? "Revisar cobertura"
+                            : source.state === "missing"
                           ? "Sin configurar"
                           : "Revisar fuente"}
                     </span>
+                    {source.dataThrough && <small>Datos hasta {new Intl.DateTimeFormat('es-AR',{dateStyle:'short',timeStyle:'short',timeZone:data.timezone}).format(new Date(source.dataThrough))}</small>}
                     <time>
                       {source.updatedAt
                         ? new Intl.DateTimeFormat("es-AR", {

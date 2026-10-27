@@ -46,6 +46,7 @@ test("missing denominator is unavailable, never fabricated zero", () => {
   assert.equal(ratio(0, 0), null);
   assert.equal(ratio(3, 10), 30);
 });
+const coverage = { from: "2026-10-01T00:00:00Z", to: "2026-10-27T13:00:00Z" };
 const event = {
   id: "evt-1",
   kind: "product.activated",
@@ -54,22 +55,27 @@ const event = {
 };
 test("imports reject wrong source, unknown personal fields, duplicate IDs and missing timezone", () => {
   assert.equal(
-    validateImport({ source: "product", events: [event] }).events.length,
+    validateImport({ source: "product", coverage, events: [event] }).events
+      .length,
     1,
   );
-  assert.throws(() => validateImport({ source: "email", events: [event] }));
+  assert.throws(() =>
+    validateImport({ source: "email", coverage, events: [event] }),
+  );
   assert.throws(() =>
     validateImport({
       source: "product",
+      coverage,
       events: [{ ...event, email: "private@example.invalid" }],
     }),
   );
   assert.throws(() =>
-    validateImport({ source: "product", events: [event, event] }),
+    validateImport({ source: "product", coverage, events: [event, event] }),
   );
   assert.throws(() =>
     validateImport({
       source: "product",
+      coverage,
       events: [{ ...event, occurred_at: "2026-10-27T12:00:00" }],
     }),
   );

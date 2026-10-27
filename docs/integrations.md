@@ -11,7 +11,7 @@ Monedas admitidas por este conector: USD, EUR, ARS, BRL, MXN, COP, PEN, GBP, CAD
 ## Stripe: facturas pagadas y suscripciones
 
 1. Entrá a la cuenta propia de Stripe y verificá qué productos pertenecen al negocio. Copiá sus IDs de producto al catálogo de `business.config.ts`; no usar IDs de precio ni el nombre del plan.
-2. Creá una clave restringida exclusiva para el dashboard. Habilitá lectura de los recursos consultados por `lib/connectors.ts` (facturas, suscripciones y sus líneas/relaciones necesarias). Dejá permisos de escritura deshabilitados. Un 403 exige revisar el recurso faltante, no habilitar todo.
+2. Creá una clave restringida exclusiva para el dashboard. Habilitá lectura de los recursos consultados por `lib/provider-connectors.ts` (facturas, suscripciones y sus líneas/relaciones necesarias). Dejá permisos de escritura deshabilitados. Un 403 exige revisar el recurso faltante, no habilitar todo.
 3. Guardala como `STRIPE_RESTRICTED_KEY` del lado servidor. Empezá en el entorno de prueba de Stripe y conciliá antes de usar la clave live. No mezclar productos test y live.
 4. Contrastá un día cerrado con la lista de facturas pagadas, usando fecha de pago, moneda y catálogo idénticos.
 
@@ -38,17 +38,21 @@ La configuración no añade campañas nuevas automáticamente; incorporarlas req
 
 Estos módulos funcionan con tablas normalizadas de Postgres y un importador local. Producto incluye además un comando manual de lectura desde PostHog, explicado abajo. **No incluyen una sincronización programada ni un conector universal a plataformas de cursos o email.** El agente puede crear un exportador/adaptador para el proveedor elegido, conservando este contrato.
 
-Aplicá `db/analytics.sql` en la base dedicada con el mismo rol usado por `DATABASE_URL`. Si el administrador aplica la migración con otro rol, debe otorgar al rol del servidor los permisos sobre ese esquema y tablas; verificarlos antes de importar. Después, desde la raíz:
+Ejecutá `npm run db:setup` para aplicar `db/analytics.sql` en la base dedicada con el rol usado por `DATABASE_URL`. Si el administrador aplica la migración con otro rol, debe otorgar al rol del servidor los permisos sobre ese esquema y tablas; verificarlos antes de importar. Después, desde la raíz:
 
 ```bash
 npm run data:import -- /ruta/privada/eventos.json
 ```
 
-El archivo es un objeto JSON con `source` (`product` o `email`) y `events`:
+El archivo es un objeto JSON con `source` (`product` o `email`), `coverage` obligatorio y `events`:
 
 ```json
 {
   "source": "product",
+  "coverage": {
+    "from": "2026-10-01T00:00:00Z",
+    "to": "2026-10-02T00:00:00Z"
+  },
   "events": [
     {
       "id": "demo-product-001",
@@ -60,7 +64,7 @@ El archivo es un objeto JSON con `source` (`product` o `email`) y `events`:
 }
 ```
 
-Este ejemplo es sintético; no importarlo a una base real como si fuese actividad del negocio. `id` debe ser único globalmente: prefijalo por fuente/proveedor. `occurred_at` es el momento del evento con zona horaria, no el momento de la exportación.
+Este ejemplo es sintético; no importarlo a una base real como si fuese actividad del negocio. `coverage.from` y `coverage.to` son fechas ISO con zona; representan `[from,to)`, inicio incluido y fin excluido, ordenadas y sin fin futuro. Todos los eventos deben caer dentro. Declarar una ventana exige exportar íntegramente esa ventana, incluso si tuvo cero eventos. `id` debe ser único globalmente: prefijalo por fuente/proveedor. `occurred_at` es el momento del evento con zona horaria, no el momento de la exportación.
 
 | `source` | `kind` admitidos | `subject_id` |
 |---|---|---|
@@ -71,7 +75,7 @@ Máximo por archivo: 10.000 eventos y 5 MB. La importación es idempotente por `
 
 Producto calcula usuarios/acciones/fallos a partir de esos eventos. Acordá qué acción de valor se mapea a `product.activated`; no mapear un login por conveniencia. Email forma una cohorte de mensajes cuya primera entrega cae en el rango; cuenta clics posteriores a esa entrega y anteriores al final. Importá la historia necesaria para conocer primeras entregas. No hay aperturas, rebotes, bajas ni ingresos atribuidos en esta versión.
 
-La hora visible de importación prueba cuándo se cargó el archivo; no prueba que el exportador incluyera todos los datos del proveedor. Guardá por fuera del dashboard la cobertura de la exportación (inicio, fin, filtros y exclusiones).
+La v0.2 guarda los intervalos declarados por fuente y evalúa su unión. `updatedAt` indica última carga; `dataThrough`, el corte de datos. Si falta el comienzo del rango o hay huecos, la fuente queda parcial y las tarjetas muestran `—`, no un total corto. Una cobertura continua puede mostrar cifras hasta su corte; si ese corte tiene más de 24 horas se advierte antigüedad. La cobertura declarada no prueba que el exportador o tracking capturen todas las acciones reales. Conservá filtros y exclusiones en la conciliación. Cargas anteriores sin coverage no acreditan cobertura: reimportá ventanas completas.
 
 Para adaptar una base del producto o Resend, primero identificá sus eventos/IDs reales, exportá solo los campos del contrato, probá duplicados y datos fuera de orden, y conciliá conteos. [Stripe en PostHog](https://posthog.com/docs/data-pipelines/sources/stripe), [eventos Resend](https://resend.com/docs/webhooks/event-types).
 
@@ -82,14 +86,20 @@ El comando `npm run data:sync:posthog -- 7` lee los últimos siete días hasta e
 
 Preparación:
 
-1. Aplicá `db/analytics.sql` en la base dedicada.
+1. Ejecutá `npm run db:setup` en la base dedicada.
 2. Usá un proyecto propio de PostHog Cloud con los eventos `product.activated` y `product.failed`. Si los tuyos tienen otros nombres, adaptá y probá la consulta de `scripts/sync-posthog.ts`; el comando no los adivina ni instrumenta tu producto.
 3. Configurá `POSTHOG_HOST` como `https://us.posthog.com` o `https://eu.posthog.com`, `POSTHOG_PROJECT_ID` numérico y `POSTHOG_PERSONAL_KEY` con acceso de consulta al proyecto. El host de ingestión no es el host de esta API. El conector no admite self-hosted sin adaptación.
 4. Generá `POSTHOG_PSEUDONYM_SECRET`, un secreto aleatorio de al menos 32 caracteres, en tu gestor de secretos. Mantenelo estable: se usa con HMAC para convertir `distinct_id` en un pseudónimo antes de guardar. Cambiarlo puede dividir el historial de una misma persona. No confundir pseudonimización con anonimización irreversible.
 5. Ejecutá el comando y conciliá los conteos contra PostHog para la misma ventana. Usa un endpoint POST de consultas HogQL, de solo lectura; no envía eventos ni modifica el proyecto remoto.
 
-La consulta pagina en lotes de 5.000 y no guarda resultados parciales si alcanza el máximo de diez páginas sin confirmar el fin. Una ventana con 50.000 resultados exactos también requiere reducirla, porque no alcanza para demostrar que terminó. Los eventos se guardan en una transacción y se deduplican por `posthog:<uuid>`; una ejecución posterior conserva los eventos idénticos y rechaza la transacción si un ID existente tiene contenido distinto. No mezclar varios proyectos PostHog en la misma instalación sin ampliar el namespace de IDs y su política de identidad.
+La consulta pagina por cursor UUID (`keyset`), en lotes de 5.000 hasta 50.000 eventos, con una consulta final de una fila para distinguir el límite exacto de un resultado truncado. Rechaza respuestas incompletas y no guarda un parcial. Los eventos se guardan en una transacción y se deduplican por `posthog:<uuid>`; una ejecución posterior conserva los eventos idénticos y rechaza la transacción si un ID existente tiene contenido distinto. No mezclar varios proyectos PostHog en la misma instalación sin ampliar el namespace de IDs y su política de identidad.
 
-La lectura usa una ventana móvil UTC, mientras las tarjetas agrupan por la zona del negocio. Importá suficiente historia para cubrir el rango que vas a mostrar. El comando no prueba que la instrumentación sea completa ni que todos los eventos hayan llegado: documentá retrasos y cobertura. Antes de añadir un scheduler, definir frecuencia, cuotas, observación de fallos y tratamiento de eventos tardíos.
+El conjunto de eventos puede crecer mientras se pagina: la consulta no ofrece un snapshot transaccional del proveedor. Los eventos tardíos requieren reimportar una ventana solapada suficiente; no se reconstruyen automáticamente fuera de la ventana pedida. La lectura usa una ventana móvil UTC, mientras las tarjetas agrupan por la zona del negocio. Importá suficiente historia para cubrir el rango que vas a mostrar. El comando no prueba que la instrumentación sea completa ni que todos los eventos hayan llegado: documentá retrasos y cobertura. Antes de añadir un scheduler, definir frecuencia, cuotas, observación de fallos y tratamiento de eventos tardíos.
 
-Estado de verificación inicial: el comando PostHog se implementó y pasó comprobaciones de código/build; no se probó contra una cuenta real del proveedor. Esa lectura y conciliación corresponden a cada instalación.
+Estado v0.2: la verificación final de esta revisión está pendiente de registro en [verification.md](verification.md). No se probó una cuenta real de PostHog; la lectura y conciliación corresponden a cada instalación.
+
+## Diagnóstico y frecuencia
+
+`npm run doctor` valida configuración sin mostrar secretos ni probar permisos de los proveedores. `npm run doctor -- --database` agrega lecturas del esquema y del dueño. No acredita Face ID físico, TLS correctamente operado ni conciliación.
+
+Stripe/Meta tienen caché de 60 segundos por proceso y agrupan solicitudes concurrentes de la misma lectura. Es una reducción de llamadas, no un scheduler ni una caché compartida entre instancias. Tras un fallo no se sirve silenciosamente un dato viejo como actual. La hora de lectura conserva el corte real; pulsar Actualizar puede reutilizar una lectura dentro del TTL.

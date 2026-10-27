@@ -1,9 +1,7 @@
 import pg from "pg";
-import type { Event } from "./import-validation";
-export async function storeEvents(
-  connectionString: string,
-  data: { source: "product" | "email"; events: Event[] },
-) {
+import { validateImport, type ImportData } from "./import-validation";
+export async function storeEvents(connectionString: string, input: ImportData) {
+  const data = validateImport(input, { maxEvents: 50000 });
   const client = new pg.Client({
     connectionString,
     connectionTimeoutMillis: 10000,
@@ -25,6 +23,10 @@ export async function storeEvents(
           "ID existente con contenido distinto. Usá IDs estables con namespace y revisá el origen.",
         );
     }
+    await client.query(
+      "INSERT INTO stats.coverage_intervals(source,covered_from,covered_to) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
+      [data.source, data.coverage.from, data.coverage.to],
+    );
     await client.query(
       "INSERT INTO stats.imports(source) VALUES ($1) ON CONFLICT (source) DO UPDATE SET imported_at=now()",
       [data.source],

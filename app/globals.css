@@ -955,3 +955,6 @@ footer {
     transition: none !important;
   }
 }
+
+.status-dot.partial { background: #a66022; }
+.source-state small { display: block; font-size: 12px; line-height: 1.5; }

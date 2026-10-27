@@ -1,9 +1,10 @@
 import { DateTime } from "luxon";
-export type SourceState = "ready" | "missing" | "error";
+export type SourceState = "ready" | "missing" | "error" | "partial";
 export type Source = {
   name: string;
   state: SourceState;
   updatedAt: string | null;
+  dataThrough?: string | null;
   detail: string;
 };
 export type Metric = {

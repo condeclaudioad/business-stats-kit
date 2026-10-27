@@ -2,6 +2,7 @@ import "server-only";
 import pg from "pg";
 import { business } from "../business.config";
 import { rangeForDays } from "./contracts";
+import { assessCoverage } from "./coverage";
 const globalPool = globalThis as typeof globalThis & {
   analyticsPool?: pg.Pool;
 };
@@ -23,10 +24,29 @@ export async function eventMetrics(days: number, source: "product" | "email") {
     [source],
   );
   if (!imported.rowCount) return null;
-  const params = [
+  const intervals = await p.query(
+    "SELECT covered_from,covered_to FROM stats.coverage_intervals WHERE source=$1 ORDER BY covered_from",
+    [source],
+  );
+  const coverage = assessCoverage(
+    intervals.rows.map((row) => ({
+      from: row.covered_from.toISOString(),
+      to: row.covered_to.toISOString(),
+    })),
     new Date(r.start * 1000).toISOString(),
     new Date(r.end * 1000).toISOString(),
-  ];
+  );
+  if (!coverage.complete || !coverage.asOf)
+    return {
+      active: 0,
+      actions: 0,
+      failed: 0,
+      delivered: 0,
+      clicked: 0,
+      at: imported.rows[0].imported_at.toISOString(),
+      coverage,
+    };
+  const params = [new Date(r.start * 1000).toISOString(), coverage.asOf];
   if (source === "product") {
     const { rows } = await p.query(
       `SELECT COUNT(DISTINCT subject_id) FILTER (WHERE kind='product.activated') AS active, COUNT(*) FILTER (WHERE kind='product.activated') AS actions, COUNT(*) FILTER (WHERE kind='product.failed') AS failed FROM stats.events WHERE occurred_at >= $1 AND occurred_at < $2`,
@@ -39,6 +59,7 @@ export async function eventMetrics(days: number, source: "product" | "email") {
       delivered: 0,
       clicked: 0,
       at: imported.rows[0].imported_at.toISOString(),
+      coverage,
     };
   }
   const { rows } = await p.query(
@@ -52,5 +73,6 @@ export async function eventMetrics(days: number, source: "product" | "email") {
     delivered: Number(rows[0].delivered),
     clicked: Number(rows[0].clicked),
     at: imported.rows[0].imported_at.toISOString(),
+    coverage,
   };
 }
