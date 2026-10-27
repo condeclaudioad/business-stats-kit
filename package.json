@@ -6,7 +6,7 @@
     "dev": "next dev -H 127.0.0.1 -p 4321",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p 4321",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "auth:setup": "node scripts/auth-setup.mjs",
     "data:import": "tsx --env-file=.env.local scripts/import-data.ts",
