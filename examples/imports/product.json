@@ -1,0 +1,33 @@
+{
+  "source": "product",
+  "coverage": {
+    "from": "2026-10-01T00:00:00Z",
+    "to": "2026-10-02T00:00:00Z"
+  },
+  "events": [
+    {
+      "id": "fixture:p1",
+      "kind": "product.activated",
+      "subject_id": "demo-person-a",
+      "occurred_at": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "fixture:p2",
+      "kind": "product.activated",
+      "subject_id": "demo-person-a",
+      "occurred_at": "2026-10-01T11:00:00Z"
+    },
+    {
+      "id": "fixture:p3",
+      "kind": "product.activated",
+      "subject_id": "demo-person-b",
+      "occurred_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "id": "fixture:p4",
+      "kind": "product.failed",
+      "subject_id": "demo-person-b",
+      "occurred_at": "2026-10-01T13:00:00Z"
+    }
+  ]
+}

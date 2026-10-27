@@ -4,11 +4,19 @@ Este proyecto es un dashboard privado de un dueño por instalación, con una dem
 
 ## Recorrido
 
-- Para configurar el negocio: `.agents/skills/stats-onboarding/SKILL.md`.
-- Para conectar o adaptar fuentes: `.agents/skills/stats-connect-sources/SKILL.md`.
-- Para revisar acceso y preparar publicación: `.agents/skills/stats-security/SKILL.md`.
+Elegí la skill por el trabajo, no cargar todas:
 
-Las copias bajo `.claude/skills` apuntan a las mismas instrucciones. Si el cliente no descubre una skill, leer su archivo explícitamente. No hace falta instalar skills globales para usar el repo.
+- Negocio/demo: `.agents/skills/stats-onboarding/SKILL.md`.
+- Fuente existente: `.agents/skills/stats-connect-sources/SKILL.md`.
+- Proveedor o métrica nueva: `.agents/skills/stats-adapter/SKILL.md`.
+- Apariencia: `.agents/skills/stats-design/SKILL.md`.
+- Números que difieren: `.agents/skills/stats-reconcile/SKILL.md`.
+- Acceso/publicación: `.agents/skills/stats-security/SKILL.md`.
+- Fallos/cambios de API: `.agents/skills/stats-maintenance/SKILL.md`.
+
+[Guía y prompts](docs/agents.md). `.claude/skills` enlaza la fuente común. Claude tiene roles en `.claude/agents`; Codex dispone de briefs portables en `.agents/briefs`, sin activación automática. No hace falta instalar skills globalmente. Si el cliente no descubre una skill, leer su archivo explícitamente.
+
+Antes de editar, inspeccioná rama y cambios existentes. Si el pedido solo trae la URL del repo, `stats-onboarding` guía la copia inicial sin sobrescribir instalaciones. Guardá configuración y evidencia privada del alumno fuera del repo público; no commitear reportes financieros reales. Una guía de proveedor no demuestra que exista su conector.
 
 ## Invariantes
 
@@ -25,3 +33,13 @@ Las copias bajo `.claude/skills` apuntan a las mismas instrucciones. Si el clien
 ## Entrega
 
 Reportar qué cambió, qué pruebas se ejecutaron y qué sigue sin comprobar. Un build no prueba Face ID real, una migración no prueba permisos de producción y un mock no prueba la cuenta del usuario. No afirmar seguridad absoluta. Conservar licencias del código incorporado; evaluar el archivo concreto, no el nombre comercial del template.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->

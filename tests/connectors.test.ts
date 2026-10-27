@@ -35,3 +35,14 @@ test('Meta verifies campaign ownership before accepting empty Insights and cache
  assert.equal((await c.metaMetrics(30))?.spend,0);
  assert.equal(campaignReads,1);
 });
+
+test('Stripe cannot certify totals when nested pagination or subscription items are unknown',async()=>{
+ for(const lines of [{data:paid().lines.data},{has_more:'false',data:paid().lines.data},undefined]){
+  const t=transport(u=>u.pathname.endsWith('/invoices')?{has_more:false,data:[{...paid(),lines}]}:undefined);
+  await assert.rejects(createConnectors(config(),env,t.fetch).stripeMetrics(7));
+ }
+ for(const items of [undefined,{data:[]},{has_more:false},{has_more:false,data:[]},{has_more:true,data:[]}]){
+  const t=transport(u=>u.pathname.endsWith('/subscriptions')?{has_more:false,data:[{id:'sub_synthetic',items}]}:undefined);
+  await assert.rejects(createConnectors(config(),env,t.fetch).stripeMetrics(7));
+ }
+});

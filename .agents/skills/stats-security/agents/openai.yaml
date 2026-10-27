@@ -1,0 +1,4 @@
+interface:
+  display_name: "Revisá el acceso"
+  short_description: "Verificá login, passkeys y publicación privada"
+  default_prompt: "Usá $stats-security en este repositorio y entregá resultados con evidencia y pendientes."

@@ -34,3 +34,9 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm audit --audit-level=high
+      - name: Prepare isolated browser database
+        run: node -e "const c=new (require('pg').Client)({connectionString:'postgresql://kit_test:ci_disposable_only@localhost:5432/kit_auth_test'});c.connect().then(()=>c.query('CREATE DATABASE kit_e2e_test')).then(()=>c.end()).catch(()=>process.exit(1))"
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+        env:
+          E2E_DATABASE_URL: postgresql://kit_test:ci_disposable_only@localhost:5432/kit_e2e_test

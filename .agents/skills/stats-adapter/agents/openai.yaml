@@ -1,0 +1,4 @@
+interface:
+  display_name: "Creá un adaptador"
+  short_description: "Implementá proveedores nuevos con contratos y tests"
+  default_prompt: "Usá $stats-adapter en este repositorio y entregá resultados con evidencia y pendientes."

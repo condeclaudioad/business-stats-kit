@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import DemoFunnel from "./DemoFunnel";
 import type { Dashboard as Data, Metric } from "@/lib/contracts";
 type Area = "overview" | "marketing" | "product" | "email";
 const areas: { id: Area; label: string; title: string; description: string }[] =
@@ -83,13 +84,15 @@ export default function Dashboard() {
     [loading, setLoading] = useState(true),
     [refresh, setRefresh] = useState(0);
   useEffect(() => {
-    const saved = localStorage.getItem("stats-theme");
-    if (saved && ["studio", "editorial", "terminal"].includes(saved))
-      setTheme(saved);
+    try {
+      const saved = localStorage.getItem("stats-theme");
+      if (saved && ["studio", "editorial", "terminal", "cosmos", "executive"].includes(saved)) setTheme(saved);
+    } catch { /* Storage may be disabled; selection still works for this visit. */ }
   }, []);
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
+    setData(null);
     setError("");
     fetch(`/api/dashboard?days=${days}`, {
       cache: "no-store",
@@ -106,9 +109,9 @@ export default function Dashboard() {
           );
         return r.json();
       })
-      .then(setData)
+      .then((next) => { if (!controller.signal.aborted) setData(next); })
       .catch((e) => {
-        if (e.name !== "AbortError") {
+        if (!controller.signal.aborted && e.name !== "AbortError") {
           setError(e.message);
           setData(null);
         }
@@ -183,14 +186,17 @@ export default function Dashboard() {
               value={theme}
               onChange={(e) => {
                 setTheme(e.target.value);
-                localStorage.setItem("stats-theme", e.target.value);
+                try { localStorage.setItem("stats-theme", e.target.value); } catch { /* Optional persistence. */ }
               }}
             >
+              <option value="cosmos">Cosmos</option>
+              <option value="executive">Executive</option>
               <option value="studio">Studio</option>
               <option value="editorial">Editorial</option>
               <option value="terminal">Terminal</option>
             </select>
           </label>
+          {data && !data.demo && <button className="mobile-logout text-button" onClick={logout}>Cerrar sesión</button>}
         </header>
         {data?.demo && (
           <div className="demo-banner">
@@ -413,6 +419,7 @@ export default function Dashboard() {
                 </p>
               </section>
             )}
+            {area === "overview" && data.demo && <DemoFunnel />}
             <section id="sources" className="sources">
               <div className="section-heading">
                 <div>

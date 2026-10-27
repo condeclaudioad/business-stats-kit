@@ -13,3 +13,11 @@ Leé `AGENTS.md`, `README.md`, `docs/metrics.md` y `business.config.ts` desde la
 6. Conectá una fuente por vez con `stats-connect-sources`. Verificá el arranque y reportá lo que el usuario ya puede hacer, la evidencia y los siguientes pasos concretos.
 
 No crear suscripciones de infraestructura, publicar ni modificar sistemas externos por inferencia del onboarding. Si el usuario ya autorizó una acción concreta, ejecutala dentro de ese alcance sin repetir confirmaciones rutinarias.
+
+## Empezar con solo el enlace
+
+Si todavía no hay checkout, identificá la carpeta destino y cloná la URL pública proporcionada sin sobrescribir una carpeta existente. Abrí el proyecto y leé sus instrucciones antes de instalar. No hace falta que el alumno copie archivos uno por uno. Si ya existe una instalación, preservá `.env.local`, rama y cambios locales; no ejecutar setup como si fuese nueva.
+
+Arrancá con una oferta y elegí solo la receta relevante: `docs/recipes/saas.md`, `course.md`, `pdf.md` o `services.md`. Las rutas son relativas a `docs/recipes/`. Diferenciá funciones incluidas de adaptaciones: el template no trae Mercado Pago, notificaciones de ventas, recordatorios, atribución UTM completa ni apertura de PDFs. El refresco del kit no promete la frecuencia del dashboard del instructor.
+
+Aceptación del onboarding: demo abierta y etiquetada; ficha del negocio con fórmula/fuente por métrica; estilo elegido; matriz «incluido / requiere adaptación / no necesario»; modo live solo con acceso verificado. Cada paso debe terminar con resultado observable o bloqueo concreto, no con «configurado» sin prueba. No cerrar como listo para producción por un build.

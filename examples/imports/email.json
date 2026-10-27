@@ -1,0 +1,33 @@
+{
+  "source": "email",
+  "coverage": {
+    "from": "2026-10-01T00:00:00Z",
+    "to": "2026-10-02T00:00:00Z"
+  },
+  "events": [
+    {
+      "id": "fixture:e1",
+      "kind": "email.delivered",
+      "subject_id": "demo-message-a",
+      "occurred_at": "2026-10-01T10:00:00Z"
+    },
+    {
+      "id": "fixture:e2",
+      "kind": "email.clicked",
+      "subject_id": "demo-message-a",
+      "occurred_at": "2026-10-01T11:00:00Z"
+    },
+    {
+      "id": "fixture:e3",
+      "kind": "email.clicked",
+      "subject_id": "demo-message-a",
+      "occurred_at": "2026-10-01T12:00:00Z"
+    },
+    {
+      "id": "fixture:e4",
+      "kind": "email.delivered",
+      "subject_id": "demo-message-b",
+      "occurred_at": "2026-10-01T13:00:00Z"
+    }
+  ]
+}

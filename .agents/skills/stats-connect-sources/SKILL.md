@@ -14,3 +14,7 @@ Leé `AGENTS.md`, `docs/integrations.md`, `docs/metrics.md`, `business.config.ts
 7. Registrar en `docs/business.md` o un informe sin secretos: fuente, fecha/hora con zona, filtros, cobertura, diferencia encontrada y límite pendiente.
 
 Este flujo consulta datos. No crear pagos, reembolsar, cambiar anuncios, mandar emails ni agregar tracking a producción sin alcance explícito para esa acción.
+
+Para una fuente que no existe en el código, usar `stats-adapter` antes de prometer conexión. Para discrepancias, `stats-reconcile`. Una CLI/MCP puede facilitar acceso autorizado durante configuración; no constituye por sí sola un proceso durable de sincronización del dashboard.
+
+Aceptación por fuente: ID de cuenta y scope confirmados, permiso mínimo, cobertura declarada, deduplicación probada, fallo visible y conciliación de un día cerrado. Guardar evidencia real fuera de Git; el repo solo contiene fixtures sintéticas. Dejar por separado «implementado con mocks», «conectado» y «conciliado».

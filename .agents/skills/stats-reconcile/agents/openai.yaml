@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conciliá las cifras"
+  short_description: "Explicá diferencias por IDs, fechas y cobertura"
+  default_prompt: "Usá $stats-reconcile en este repositorio y entregá resultados con evidencia y pendientes."

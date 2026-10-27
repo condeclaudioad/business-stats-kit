@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conectá fuentes"
+  short_description: "Conectá fuentes existentes con alcance verificable"
+  default_prompt: "Usá $stats-connect-sources en este repositorio y entregá resultados con evidencia y pendientes."

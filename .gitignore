@@ -7,3 +7,7 @@ coverage/
 .DS_Store
 .impeccable/
 .auth-bootstrap
+
+.vercel/
+playwright-report/
+test-results/

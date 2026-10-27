@@ -91,6 +91,8 @@ async function stripeMetrics(days: number) {
     const at = invoice.status_transitions?.paid_at;
     if(!Number.isSafeInteger(at)||at<=0)throw new Error("Factura pagada sin fecha válida.");
     if(at < r.start || at >= r.end) continue;
+    if (typeof invoice.lines?.has_more !== "boolean")
+      throw new Error("Factura sin estado de paginación de líneas.");
     const lines = invoice.lines?.has_more
       ? await stripeList(
           `invoices/${encodeURIComponent(invoice.id)}/lines`,
@@ -111,13 +113,12 @@ async function stripeMetrics(days: number) {
     byDay[day] = (byDay[day] ?? 0) + amount;
   }
   for (const sub of subs) {
-    if (sub.items?.has_more) throw new Error("Suscripción con items truncados");
+    if (typeof sub.items?.has_more !== "boolean" || sub.items.has_more)
+      throw new Error("Suscripción con items truncados o paginación desconocida");
     const lines = sub.items?.data;
-    if (
-      !Array.isArray(lines) ||
-      !scopedProducts(lines.map(productOf), business.stripe.productIds)
-    )
-      continue;
+    if (!Array.isArray(lines) || !lines.length)
+      throw new Error("Suscripción sin items legibles");
+    if (!scopedProducts(lines.map(productOf), business.stripe.productIds)) continue;
     for (const item of lines) {
       const price = item.price;
       assertCurrency(price.currency, business.currency);

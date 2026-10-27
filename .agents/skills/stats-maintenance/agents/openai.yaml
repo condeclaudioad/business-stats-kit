@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mantené el dashboard"
+  short_description: "Diagnosticá fallos de fuentes, cuotas y actualización"
+  default_prompt: "Usá $stats-maintenance en este repositorio y entregá resultados con evidencia y pendientes."

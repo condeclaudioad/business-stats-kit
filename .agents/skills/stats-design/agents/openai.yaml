@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diseñá tu dashboard"
+  short_description: "Personalizá la interfaz sin alterar las métricas"
+  default_prompt: "Usá $stats-design en este repositorio y entregá resultados con evidencia y pendientes."

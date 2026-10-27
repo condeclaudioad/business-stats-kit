@@ -1,10 +1,16 @@
 # Business Stats Kit
 
-Un dashboard privado para entender ventas, marketing, producto y email de tu negocio. Incluye una demo ficticia, tres apariencias y un recorrido guiado para Claude Code o Codex. Cada alumno usa su propia instalación y sus propias credenciales.
+Un dashboard privado para entender ventas, marketing, producto y email de tu negocio. Incluye una demo ficticia, cinco apariencias y un recorrido guiado para Claude Code o Codex. Cada alumno usa su propia instalación y sus propias credenciales.
 
-![Dashboard Studio con datos ficticios](docs/images/studio.png)
+![Dashboard Cosmos con datos ficticios](docs/images/cosmos.png)
 
-[Editorial](docs/images/editorial.png) · [Terminal](docs/images/terminal.png) · [Pruebas y límites](docs/verification.md)
+[Galería de los cinco diseños](docs/designs.md) · [Executive](docs/images/executive.png) · [Pruebas y límites](docs/verification.md)
+
+## ¿Venís de la clase?
+
+**[Empezá acá: mensaje listo para Claude/Codex y pasos](docs/start-here.md).** Incluye qué trae el kit, qué requiere adaptación y cómo crear tu propia copia. [Galería de5diseños](docs/designs.md) · [Agentes y skills especializados](docs/agents.md) · [Publicación en Vercel](docs/deploy-vercel.md).
+
+> Quiero instalar https://github.com/condeclaudioad/business-stats-kit para mi negocio. Leé AGENTS.md y usá stats-onboarding. Primero demo y diseño; después una oferta, acceso privado y una fuente conciliada. No me pidas secretos en el chat ni presentes funciones pendientes como implementadas.
 
 ## Probar la demo
 
@@ -17,7 +23,7 @@ npm run doctor
 npm run dev
 ```
 
-Abrí [http://localhost:4321](http://localhost:4321). `demo:setup` crea `.env.local` desde el ejemplo y conserva cualquier archivo existente. Revisá la salida de `doctor`; no reemplaza variables de una instalación real. El ejemplo selecciona `APP_MODE=demo`: los datos son sintéticos y no se consulta ninguna cuenta real. Podés cambiar entre Studio, Editorial y Terminal sin cambiar las métricas.
+Abrí [http://localhost:4321](http://localhost:4321). `demo:setup` crea `.env.local` desde el ejemplo y conserva cualquier archivo existente. Revisá la salida de `doctor`; no reemplaza variables de una instalación real. El ejemplo selecciona `APP_MODE=demo`: los datos son sintéticos y no se consulta ninguna cuenta real. Podés cambiar entre Studio, Editorial, Terminal, Cosmos y Executive sin cambiar las métricas.
 
 Si el cliente Git no conserva enlaces simbólicos, Claude puede leer las skills directamente desde `.agents/skills/`. No hace falta instalar nada globalmente.
 
@@ -36,6 +42,12 @@ Skills incluidas:
 - `stats-onboarding`: define el negocio y prepara su configuración.
 - `stats-connect-sources`: conecta/adapta fuentes y concilia sus números.
 - `stats-security`: comprueba acceso privado y prepara o verifica un despliegue.
+- `stats-design`: adapta estilos sin alterar métricas ni acceso.
+- `stats-adapter`: implementa proveedores o métricas que faltan con contratos y pruebas.
+- `stats-reconcile`: investiga diferencias contra el origen, por IDs y reglas.
+- `stats-maintenance`: diagnostica cuotas, caducidad, cobertura y fallos.
+
+También incluye cuatro roles de implementación/revisión para Claude y briefs portables para Codex. [Cómo usarlos y prompts concretos](docs/agents.md).
 
 La fuente común es `.agents/skills/`; `.claude/skills/` la enlaza para Claude Code. Las instrucciones están en español y no autorizan al agente a cobrar, enviar emails ni cambiar campañas.
 
@@ -43,7 +55,7 @@ La fuente común es `.agents/skills/`; `.claude/skills/` la enlaza para Claude C
 
 | Parte | Implementación | Límite relevante |
 |---|---|---|
-| Interfaz | Resumen, Marketing, Producto y Email; tres estilos. | Los datos de la demo son ficticios. |
+| Interfaz | Resumen, Marketing, Producto y Email; cinco estilos. | Los datos de la demo son ficticios. |
 | Acceso real | Dueño único, contraseña y passkey, estado durable en Postgres. | Sin equipos, registro público ni segunda passkey independiente desde el panel. |
 | Stripe | Importes de facturas saldadas del catálogo; snapshot MRR de precio fijo. | Puede incluir pagos externos/créditos: no es caja verificada. Sin pagos sin factura, reembolsos/comisiones ni descuentos en MRR. |
 | Meta | Lectura por cuentas y campañas configuradas. | Moneda/zona deben coincidir; requiere acceso API de la cuenta. |
@@ -63,7 +75,7 @@ No cambies a modo real solo para quitar la etiqueta de demo. Sin configuración 
 
 ## Verificar
 
-Estado de la v0.2: verificación final pendiente de completar y registrar en [verification.md](docs/verification.md). Los resultados históricos de la v0.1 no certifican esta revisión.
+Resultados y límites de cada revisión en [verification.md](docs/verification.md). Las cuentas reales y el dispositivo del alumno requieren su propia comprobación.
 
 ```bash
 npm test
@@ -74,6 +86,17 @@ npm run build
 Las pruebas PostgreSQL opcionales requieren bases desechables: `AUTH_TEST_DATABASE_URL` debe terminar en `_auth_test`; `TEST_DATABASE_URL`, usada por las pruebas de importación, debe terminar en `_import_test`. Leé esos tests antes de ejecutarlos: crean/modifican y eliminan esquemas de prueba. Si las variables no están configuradas, se omiten; eso no es una verificación de tu base real.
 
 El build no prueba el login en tu teléfono ni los permisos de tus cuentas. La verificación final requiere entrar con tu autenticador en el origen definitivo y confirmar que la API rechaza pedidos sin sesión.
+
+### Pruebas de navegador reproducibles
+
+Después de `npm run build`:
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
+Comprueban5diseños en escritorio/móvil y navegación en servidores locales aislados4335/4336. Para probar también contraseña/passkey con autenticador virtual, definí `E2E_DATABASE_URL` hacia una base **local descartable** cuyo nombre termine `_e2e_test`. El test resetea auth en esa base, nunca debe apuntar a una instalación real. Sin esa variable se informa la omisión; la CI sí ejecuta ambos recorridos. No prueba biometría física.
 
 ## Mapa del proyecto
 

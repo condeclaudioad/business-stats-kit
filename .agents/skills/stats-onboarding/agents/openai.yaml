@@ -1,0 +1,4 @@
+interface:
+  display_name: "Definí tu negocio"
+  short_description: "Demo, alcance y pasos para tu primera instalación"
+  default_prompt: "Usá $stats-onboarding en este repositorio y entregá resultados con evidencia y pendientes."

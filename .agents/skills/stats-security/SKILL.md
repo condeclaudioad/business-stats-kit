@@ -13,3 +13,7 @@ Leé `AGENTS.md`, `docs/security.md`, el código de autenticación, rutas de dat
 6. Escribir un informe con verificado, falló y sin comprobar. Para cada bloqueo, dar archivo/prueba y siguiente paso. No prometer que nadie podrá entrar ni atribuir al kit garantías de auditoría externa.
 
 El reset administrativo invalida accesos y requiere control del servidor/base. Antes de ejecutarlo explicar el efecto concreto; no usarlo como reparación automática de un problema de UI. Mantener las decisiones autorizadas del usuario y no pedir confirmaciones duplicadas.
+
+Para preparar Vercel, consultar `docs/recipes/vercel.md`; no ejecutar un despliegue solo porque la clase lo mencione. Mantener las passkeys asociadas al origen definitivo y comprobar los endpoints después de cualquier publicación autorizada.
+
+Aceptación: una matriz de rutas y resultado esperado/observado (anónimo, cookie falsa, sesión válida, logout), evidencia de prueba con el origen elegido y recuperación documentada. La biometría queda en el dispositivo: el servidor verifica WebAuthn. La contraseña la ingresa el dueño en CLI; el kit no la genera automáticamente. Si una prueba necesita secretos o interacción física, dar el paso privado exacto y marcarlo pendiente sin exponerlos.
