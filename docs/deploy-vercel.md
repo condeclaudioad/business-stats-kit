@@ -7,10 +7,18 @@ Este procedimiento prepara una instalación propia. El template público no incl
 1. Creá tu copia privada del template y elegí un proyecto Vercel propio. Verificá cuenta/equipo, repo y rama. El framework es **Next.js**, raíz del repo, instalación `npm ci`, build `npm run build`; no pongas `npm run dev` como comando de producción.
 2. Elegí un origen HTTPS estable (tu dominio o el dominio estable asignado al proyecto). Debe coincidir exactamente con `APP_ORIGIN`, sin barra final. Las passkeys quedan vinculadas al dominio; un preview efímero no sirve como dominio permanente.
 3. Prepará Postgres dedicado accesible desde Vercel, TLS con certificado verificado y permisos mínimos. Revisá conexiones máximas y pooling del proveedor. Este kit usa `pg`; no convierte automáticamente una base local en una base remota.
-4. En una terminal privada, `.env.local` apunta a esa base y contiene `APP_MODE=live` y el origen definitivo. Ejecutá `npm run doctor`, `npm run db:setup` y `npm run auth:setup`. El último pide contraseña sin mostrarla y genera `.auth-bootstrap` local. **No ejecutes reset como parte del build ni en cada deploy.**
-5. Cargá en el entorno **Production** de Vercel `APP_MODE=live`, `APP_ORIGIN` y `DATABASE_URL`. Agregá solo las claves de fuentes que vas a conectar. No usar prefijos `NEXT_PUBLIC_`. `.auth-bootstrap` no es variable de hosting y no se sube. No imprimir valores en logs.
+4. En una terminal privada, `.env.local` apunta a esa base y contiene `APP_MODE=live` y el origen definitivo. Ejecutá `npm run doctor` y `npm run db:setup` para preparar eventos/cobertura. Todavía no generes el token inicial: vence en 30 minutos. El alta de acceso se hace después de tener el deployment disponible. **No ejecutes reset como parte del build ni en cada deploy.**
+5. Cargá en el entorno **Production** de Vercel `APP_MODE=live`, `APP_ORIGIN` y `DATABASE_URL`. Mantené ausentes las claves de proveedores hasta completar y comprobar el acceso privado. Después agregá una fuente por vez y generá un nuevo deployment para aplicar esas variables. No usar prefijos `NEXT_PUBLIC_`. `.auth-bootstrap` no es variable de hosting y no se sube. No imprimir valores en logs.
 6. Para Preview usá demo sin secretos o una base de prueba independiente. No compartas credenciales de producción con previews ni código de terceros. Un preview en demo es público y ficticio; no demuestra el login real.
 7. Corré tests/typecheck/build. Al publicar, los cambios de variables se aplican a un nuevo deployment; verificá el entorno seleccionado. Si habilitás integración Git, sus pushes pueden generar deployments: revisá esa automatización antes de usarla.
+
+## Dar de alta el acceso justo antes de entrar
+
+Con el deployment disponible y el dominio estable elegido, ejecutá `npm run auth:setup` desde la copia local que apunta a **esa base dedicada**. Aplica el esquema de acceso, pide la contraseña en privado y genera `.auth-bootstrap`, válido durante 30 minutos. No requiere volver a desplegar: el estado se guarda en Postgres.
+
+Abrí `/login` en **el mismo origen que `APP_ORIGIN`**. Si configuraste `https://stats.tu-dominio.example`, no intentes registrar desde `http://localhost:4321`: el origen debe coincidir. Para aprender localmente, usá otra base y origen local; no registres una passkey local para luego asumir que funciona en otro dominio.
+
+Si estás retomando una instalación con dueño, no ejecutes otra alta ni `--reset` por rutina: intentá el acceso existente. Solo usá recuperación cuando corresponda y conociendo que revoca todos los accesos. Sin el esquema de auth instalado todavía puede aparecer un503; eso no demuestra que la instalación esté lista.
 
 ## Comprobar antes de usar datos reales
 

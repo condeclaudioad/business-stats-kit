@@ -1,121 +1,147 @@
 # Business Stats Kit
 
-Un dashboard privado para entender ventas, marketing, producto y email de tu negocio. Incluye una demo ficticia, cinco apariencias y un recorrido guiado para Claude Code o Codex. Cada alumno usa su propia instalación y sus propias credenciales.
+**Tu negocio, tus datos, tu dashboard.** Una plantilla para construir un tablero privado de ventas, marketing, producto y email con ayuda de Claude Code o Codex.
 
-![Dashboard Cosmos con datos ficticios](docs/images/cosmos.png)
+Trae cinco diseños, ejemplos ficticios, acceso con contraseña y passkey, siete skills y cuatro roles de agente. Cada persona crea su propia copia y conecta sus propias fuentes.
 
-[Galería de los cinco diseños](docs/designs.md) · [Executive](docs/images/executive.png) · [Pruebas y límites](docs/verification.md)
+[Empezar con el agente](#empezar-con-claude-code-o-codex) · [Probar la demo](#probar-la-demo) · [Guía de construcción](docs/build-guide.md) · [Diseños](docs/designs.md) · [Seguridad](docs/security.md)
 
-## ¿Venís de la clase?
+![Vista del dashboard Cosmos: datos inventados, métricas con definición y gráfico diario](docs/images/readme-overview.png)
 
-**[Empezá acá: mensaje listo para Claude/Codex y pasos](docs/start-here.md).** Incluye qué trae el kit, qué requiere adaptación y cómo crear tu propia copia. [Galería de5diseños](docs/designs.md) · [Agentes y skills especializados](docs/agents.md) · [Publicación en Vercel](docs/deploy-vercel.md).
+*Cosmos, inspirado en el panel del instructor. Todos los números de las imágenes pertenecen a un negocio ficticio; no son resultados prometidos ni datos de Claudio.*
 
-> Quiero instalar https://github.com/condeclaudioad/business-stats-kit para mi negocio. Leé AGENTS.md y usá stats-onboarding. Primero demo y diseño; después una oferta, acceso privado y una fuente conciliada. No me pidas secretos en el chat ni presentes funciones pendientes como implementadas.
+## Qué vas a poder construir
+
+Un lugar para responder preguntas concretas: qué facturas se saldaron, cuánto invertiste, qué acciones de valor hicieron tus clientes y cuántos mensajes entregados recibieron clics. Cada métrica conserva su fuente, período, alcance y cobertura.
+
+| Incluido y funcional | Qué necesita tu configuración | Qué requiere desarrollo adicional |
+|---|---|---|
+| Demo, cinco estilos y cuatro secciones | Nombre, moneda, zona y una oferta inicial | Multiempresa o equipos con permisos |
+| Contraseña + passkey, un dueño | Postgres dedicado, origen y alta privada | Segunda passkey independiente y recuperación autoservicio |
+| Lectura Stripe y Meta | Claves de lectura, IDs y conciliación | Mercado Pago, Hotmart, Google Ads u otras fuentes |
+| Producto/email por JSON; consulta manual PostHog | Exportación completa y eventos canónicos | Sincronización nativa Resend, recordatorios y avisos de ventas |
+| Embudos **visuales ficticios**, solo en demo | Elegir las etapas de tu negocio | Unión real anuncio→visita→pago y envío de conversiones |
+
+**No reemplaza UTMify de forma completa.** El kit no implementa atribución por anuncio ni envío de conversiones. [Comparación y condiciones para decidir](docs/utmify.md).
+
+Stripe mide facturas saldadas y MRR nominal del catálogo: no representa caja bancaria ni beneficio, y no descuenta comisiones/reembolsos. Un proveedor que falla aparece como no disponible; no se convierte en cero. [Definiciones y límites](docs/metrics.md).
+
+## Empezar con Claude Code o Codex
+
+Copiá este mensaje en un agente con acceso a archivos y terminal:
+
+> Quiero instalar https://github.com/condeclaudioad/business-stats-kit para mi negocio. Si ya tengo una copia, preservala; si no, prepará una copia propia. Leé AGENTS.md y seguí docs/build-guide.md con stats-onboarding. Primero demo y diseño; después una oferta, fuentes y métricas definidas, acceso privado y una fuente conciliada. No me pidas secretos en el chat. Guardá avances privados fuera de Git y distinguí implementado, conectado y verificado. No publiques hasta que haya elegido y autorizado el destino.
+
+El agente guía y ejecuta lo que su entorno permite. Vos elegís el negocio, ingresás credenciales en privado y completás la passkey. Pegar el enlace en un chat sin herramientas no instala la aplicación.
+
+### El orden de construcción
+
+| Paso | Resultado que debe comprobar el agente |
+|---|---|
+| 1. Copia propia y entorno | Carpeta correcta, cambios existentes preservados y dependencias instaladas |
+| 2. Demo | Abre localmente, muestra etiqueta ficticia y permite navegar |
+| 3. Una oferta y un diseño | Ficha del negocio, definiciones y apariencia elegida |
+| 4. Adaptaciones necesarias | Fuentes clasificadas; conectores faltantes probados con fixtures antes de usar cuentas |
+| 5. Base y acceso privado | Origen elegido, esquema dedicado y contraseña + passkey; API rechaza acceso anónimo |
+| 6. Una fuente por vez | Permiso mínimo, alcance explícito y un período conciliado contra el origen |
+| 7. Publicación y operación | Pruebas en el dominio final, recuperación, backups y responsable de mantenimiento |
+
+La [guía de construcción](docs/build-guide.md) detalla comandos, evidencias, dependencias y cómo retomar una instalación existente. Si se elige el dominio remoto desde el principio, explica cuándo publicar la instalación vacía y registrar la passkey antes de conectar fuentes. No existe un botón que conecte todas tus cuentas automáticamente.
 
 ## Probar la demo
 
-Necesitás Git, Node.js 22.22 o superior compatible (también podés usar Node.js 24) y npm. Creá tu copia de este repositorio y, desde su carpeta:
+Necesitás Git, Node.js **22.22 o 24** y npm. No necesitás cuentas Stripe/Meta, base de datos ni claves para probarla.
+
+1. En este repo, elegí **Use this template → Create a new repository**. Creá tu copia, preferentemente privada para la adaptación de tu negocio.
+2. Cloná **tu copia**, no el repositorio del instructor como destino de tus cambios. En la terminal, reemplazá `URL_DE_TU_COPIA` por la URL que muestra GitHub:
 
 ```bash
+git clone URL_DE_TU_COPIA mi-dashboard
+cd mi-dashboard
 npm ci
 npm run demo:setup
 npm run doctor
 npm run dev
 ```
 
-Abrí [http://localhost:4321](http://localhost:4321). `demo:setup` crea `.env.local` desde el ejemplo y conserva cualquier archivo existente. Revisá la salida de `doctor`; no reemplaza variables de una instalación real. El ejemplo selecciona `APP_MODE=demo`: los datos son sintéticos y no se consulta ninguna cuenta real. Podés cambiar entre Studio, Editorial, Terminal, Cosmos y Executive sin cambiar las métricas.
+3. Abrí **[http://localhost:4321](http://localhost:4321)**. Debe aparecer la etiqueta **DEMO** y datos inventados. Cambiá el estilo, la sección y el período. Para detener el servidor, usá `Ctrl+C`.
 
-Si el cliente Git no conserva enlaces simbólicos, Claude puede leer las skills directamente desde `.agents/skills/`. No hace falta instalar nada globalmente.
+`demo:setup` conserva un `.env.local` existente. Si estás retomando una instalación live, no la cambies a demo ni reemplaces sus credenciales: seguí la guía de construcción. `doctor` comprueba configuración; no certifica permisos de proveedores ni seguridad en producción.
 
-## Abrir la clase
+## Elegí el diseño
 
-En otra terminal, ejecutá `npm run class:serve` y abrí [http://127.0.0.1:4324](http://127.0.0.1:4324). El material está en [class/](class/README.md), con presentación y notas. El servidor es local y no publica la clase en internet.
+Todos usan los mismos contratos y controles de acceso. Cambiar la apariencia no cambia las fórmulas.
 
-## Pedile al agente que te guíe
+| Estilo | Aspecto y uso |
+|---|---|
+| [Cosmos](docs/images/cosmos.png) | Grafito, vidrio y acento rojo/violeta, inspirado en el panel del instructor |
+| [Executive](docs/images/executive.png) | Navegación superior y distribución compacta |
+| [Studio](docs/images/studio.png) | Claro, verde y navegación lateral |
+| [Editorial](docs/images/editorial.png) | Papel, serif y presentación de informe |
+| [Terminal](docs/images/terminal.png) | Oscuro, monoespaciado y acentos verdes |
 
-Abrí esta carpeta en Claude Code o Codex y escribí:
+En **Resumen**, la demo también permite explorar embudos de software, curso/PDF y servicios:
 
-> Leé AGENTS.md y usá la skill stats-onboarding. Quiero adaptar este dashboard a mi negocio. Ayudame a definir las métricas y conectar mis fuentes, sin pedirme claves en el chat.
+![Laboratorio de embudo sintético con cuatro etapas y aclaración de que la atribución no está implementada](docs/images/readme-funnel.png)
 
-Skills incluidas:
+*El laboratorio usa una cohorte inventada, independiente del período del tablero. Nunca aparece como medición real en modo live.*
 
-- `stats-onboarding`: define el negocio y prepara su configuración.
-- `stats-connect-sources`: conecta/adapta fuentes y concilia sus números.
-- `stats-security`: comprueba acceso privado y prepara o verifica un despliegue.
-- `stats-design`: adapta estilos sin alterar métricas ni acceso.
-- `stats-adapter`: implementa proveedores o métricas que faltan con contratos y pruebas.
-- `stats-reconcile`: investiga diferencias contra el origen, por IDs y reglas.
-- `stats-maintenance`: diagnostica cuotas, caducidad, cobertura y fallos.
+[Galería y archivos para personalizar](docs/designs.md) · [Receta SaaS](docs/recipes/saas.md) · [Curso](docs/recipes/course.md) · [PDF](docs/recipes/pdf.md) · [Servicios](docs/recipes/services.md).
 
-También incluye cuatro roles de implementación/revisión para Claude y briefs portables para Codex. [Cómo usarlos y prompts concretos](docs/agents.md).
+## Agentes y skills: qué hace cada uno
 
-La fuente común es `.agents/skills/`; `.claude/skills/` la enlaza para Claude Code. Las instrucciones están en español y no autorizan al agente a cobrar, enviar emails ni cambiar campañas.
+| Skill | Para qué usarla |
+|---|---|
+| `stats-onboarding` | Instalar, definir el negocio y coordinar el recorrido |
+| `stats-design` | Adaptar la apariencia con pruebas responsive |
+| `stats-connect-sources` | Configurar fuentes ya soportadas |
+| `stats-adapter` | Construir una integración o métrica que todavía falta |
+| `stats-reconcile` | Explicar y corregir diferencias contra el proveedor |
+| `stats-security` | Revisar acceso y preparar/verificar una publicación |
+| `stats-maintenance` | Diagnosticar fallos, cobertura, cuotas y cambios de API |
 
-## Qué incluye hoy
+La fuente común está en `.agents/skills/`; los enlaces de `.claude/skills/` permiten compartirla. Si tu cliente no los reconoce, pedile leer el `SKILL.md` explícitamente. No hace falta instalar skills globales.
 
-| Parte | Implementación | Límite relevante |
-|---|---|---|
-| Interfaz | Resumen, Marketing, Producto y Email; cinco estilos. | Los datos de la demo son ficticios. |
-| Acceso real | Dueño único, contraseña y passkey, estado durable en Postgres. | Sin equipos, registro público ni segunda passkey independiente desde el panel. |
-| Stripe | Importes de facturas saldadas del catálogo; snapshot MRR de precio fijo. | Puede incluir pagos externos/créditos: no es caja verificada. Sin pagos sin factura, reembolsos/comisiones ni descuentos en MRR. |
-| Meta | Lectura por cuentas y campañas configuradas. | Moneda/zona deben coincidir; requiere acceso API de la cuenta. |
-| Producto | Eventos de valor y fallos por importación JSON o sincronización manual desde PostHog. | PostHog requiere eventos canónicos; otros proveedores necesitan un adaptador. |
-| Email | Entregas y clics por mensaje mediante importación JSON. | Sin envío de emails, aperturas ni atribución de ventas. |
-| Guías | Configuración, seguridad, métricas, clase e investigación. | No reemplazan la conciliación con tus cuentas ni una auditoría externa. |
+También hay cuatro roles: implementación, revisión de datos, revisión de acceso y revisión de diseño. Claude tiene definiciones en `.claude/agents/`; Codex dispone de encargos portables en `.agents/briefs/`, que el coordinador usa con las herramientas disponibles. **No se activan automáticamente por existir esos archivos.** [Prompts y funcionamiento](docs/agents.md).
 
-## Pasar a tus datos
+## Acceso y datos reales
 
-1. Completá `business.config.ts`: nombre, moneda, zona horaria, productos Stripe y scope de campañas Meta.
-2. Prepará un Postgres dedicado. Configurá `DATABASE_URL`, `APP_MODE=live` y `APP_ORIGIN` del lado servidor; ejecutá `npm run doctor` y `npm run db:setup` para preparar eventos/cobertura.
-3. Seguí [la guía de acceso](docs/security.md): `npm run auth:setup`, alta inicial con token privado y registro de passkey en `/login`. Después, `npm run doctor -- --database` comprueba esquema y dueño por lectura.
-4. Conectá una fuente por vez con [la guía de integraciones](docs/integrations.md). Producto/email usan `npm run data:import -- archivo.json`; cada archivo debe declarar `coverage: {from, to}` para una ventana completa exportada.
-5. Conciliá un día cerrado contra el origen y completá [las pruebas previas a publicar](docs/security.md#antes-y-después-de-publicar).
+La [guía de construcción](docs/build-guide.md) conecta el procedimiento de [seguridad](docs/security.md), las [integraciones](docs/integrations.md) y la [publicación en Vercel](docs/deploy-vercel.md).
 
-No cambies a modo real solo para quitar la etiqueta de demo. Sin configuración válida se bloquea. Guardá las claves en `.env.local` o en el gestor de secretos del hosting; nunca en archivos públicos, prompts o commits.
+- Las claves viven en el servidor; nunca en el chat, el frontend ni un commit.
+- La contraseña sola no habilita el dashboard live: también se verifica la passkey. El servidor no recibe tu huella ni tu cara.
+- Una instalación tiene un dueño. No hay registro público; la recuperación administrativa revoca sesiones y passkeys anteriores.
+- La cobertura parcial se muestra como tal. Un archivo de siete días no acredita noventa días completos.
+- No hay refresco automático cada 15 segundos. Stripe/Meta reutilizan lecturas hasta 60 segundos por proceso.
 
-## Verificar
+La seguridad también depende de permisos, infraestructura y mantenimiento. Un build exitoso no demuestra que tu dominio esté protegido ni que tus cifras estén conciliadas.
 
-Resultados y límites de cada revisión en [verification.md](docs/verification.md). Las cuentas reales y el dispositivo del alumno requieren su propia comprobación.
+## Comprobar los cambios
+
+Desde la raíz del proyecto:
 
 ```bash
 npm test
 npm run typecheck
 npm run build
-```
-
-Las pruebas PostgreSQL opcionales requieren bases desechables: `AUTH_TEST_DATABASE_URL` debe terminar en `_auth_test`; `TEST_DATABASE_URL`, usada por las pruebas de importación, debe terminar en `_import_test`. Leé esos tests antes de ejecutarlos: crean/modifican y eliminan esquemas de prueba. Si las variables no están configuradas, se omiten; eso no es una verificación de tu base real.
-
-El build no prueba el login en tu teléfono ni los permisos de tus cuentas. La verificación final requiere entrar con tu autenticador en el origen definitivo y confirmar que la API rechaza pedidos sin sesión.
-
-### Pruebas de navegador reproducibles
-
-Después de `npm run build`:
-
-```bash
 npx playwright install chromium
 npm run test:browser
 ```
 
-Comprueban5diseños en escritorio/móvil y navegación en servidores locales aislados4335/4336. Para probar también contraseña/passkey con autenticador virtual, definí `E2E_DATABASE_URL` hacia una base **local descartable** cuyo nombre termine `_e2e_test`. El test resetea auth en esa base, nunca debe apuntar a una instalación real. Sin esa variable se informa la omisión; la CI sí ejecuta ambos recorridos. No prueba biometría física.
+Las pruebas de base se omiten sin configuración específica. Usá bases **descartables**: `AUTH_TEST_DATABASE_URL` termina en `_auth_test`, `TEST_DATABASE_URL` en `_import_test`. Las pruebas de navegador usan puertos locales 4335/4336; WebAuthn requiere `E2E_DATABASE_URL` local, sin parámetros adicionales y con base terminada en `_e2e_test`. **Esas pruebas modifican o resetean las bases de prueba: nunca apuntarlas a una instalación real.**
 
-## Mapa del proyecto
+La CI ejecuta las pruebas con bases desechables, build y navegador con autenticador virtual. [Resultados y límites verificados](docs/verification.md) · [Ejecuciones de GitHub](https://github.com/condeclaudioad/business-stats-kit/actions).
 
-- `business.config.ts`: alcance del negocio, sin secretos.
-- `app/`: interfaz y rutas HTTP.
-- `lib/auth/` + `sql/auth.sql`: acceso y persistencia privada.
-- `lib/connectors.ts` + `lib/provider-connectors.ts`: caché y consultas de lectura a proveedores.
-- `db/analytics.sql` + `scripts/import-data.ts`: contrato de eventos importados.
-- `tests/`: casos de seguridad y métricas.
-- [Clase paso a paso](docs/class.md), [definiciones de métricas](docs/metrics.md), [integraciones](docs/integrations.md), [seguridad y recuperación](docs/security.md), [referencias evaluadas](docs/research.md).
+## Material y mapa del proyecto
 
-## Frescura y cobertura
+| Buscás | Archivo o guía |
+|---|---|
+| Nombre, moneda, zona y alcance | `business.config.ts` |
+| Interfaz y ejemplos visuales | `app/Dashboard.tsx`, `app/DemoFunnel.tsx`, `app/globals.css` |
+| Acceso privado | `lib/auth/`, `sql/auth.sql` |
+| Lectura de proveedores | `lib/provider-connectors.ts` |
+| Eventos e importación | `db/analytics.sql`, `scripts/import-data.ts`, [ejemplos sintéticos](examples/README.md) |
+| Diferencias respecto de la grabación | [Inicio para alumnos](docs/start-here.md) |
+| Presentación y taller | [class/](class/README.md); `npm run class:serve` abre el servidor local en el puerto 4324 |
 
-Producto/email distinguen última carga (`updatedAt`) de hasta cuándo hay datos (`dataThrough`). Intervalos declarados se unen: si falta el inicio o hay huecos, los totales quedan en `—`; si la cobertura es continua pero el corte tiene más de 24 horas, se advierte antigüedad. Declarar cobertura no prueba instrumentación completa. Stripe/Meta reutilizan lecturas durante 60 segundos por proceso; Actualizar no promete saltarse esa caché.
-
-## Publicación y mantenimiento
-
-El repositorio contiene código, no una cuenta de hosting ni una base preconfiguradas. Elegí un dominio HTTPS estable, almacená secretos solo en el servidor, verificá permisos y probá el deployment real. El proceso estándar de producción es `npm run build` y `npm start`; adaptá la escucha de red al hosting elegido sin abrir el servidor de desarrollo a internet.
-
-Mantené dependencias, backups, revisión de permisos y conciliaciones cuando cambien productos o proveedores. No se promete seguridad absoluta ni una réplica completa de una plataforma de atribución comercial.
-
-Licencia del código propio: [MIT](LICENSE). Los repos externos se investigaron como referencias; no se copiaron sus templates ni skills. Si incorporás componentes ajenos, conservá sus licencias.
+El código tiene licencia [MIT](LICENSE). El hosting, la base, el mantenimiento y los adaptadores pueden tener costos; no se promete ahorro fijo ni instalación en un tiempo determinado. Las referencias externas y sus licencias están documentadas en [investigación](docs/research.md).

@@ -11,3 +11,6 @@ coverage/
 .vercel/
 playwright-report/
 test-results/
+
+# Private installation notes and reconciliation evidence (never publish).
+.local/

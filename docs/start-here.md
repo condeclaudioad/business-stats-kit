@@ -10,6 +10,8 @@ El agente necesita acceso a archivos/terminal. Pegar el link en un chat sin herr
 
 En GitHub elegí **Use this template → Create a new repository**, preferentemente privado para tu adaptación. Cloná tu copia y abrí esa carpeta en el agente. No uses la cuenta de Claudio ni pegues archivos secretos. [Cómo crear una copia](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
+El procedimiento canónico está en la [guía de construcción paso a paso](build-guide.md): seguí sus fases y guardá el estado privado para retomar sin repetir altas ni resets.
+
 ## Cuatro resultados comprobables
 
 1. **Demo:** abre localmente, muestra etiqueta ficticia, podés elegir apariencia y navegar desde el celular en una prueba responsive.
@@ -29,7 +31,7 @@ En GitHub elegí **Use this template → Create a new repository**, preferenteme
 | Email / Resend | Contrato de importación de entregas y clics. No trae sincronización nativa Resend ni envía recordatorios. |
 | Producto, cursos o PDF | Eventos canónicos por JSON o PostHog. Instrumentar acciones reales es parte de la adaptación; una descarga no demuestra lectura. |
 | Embudo y UTMs | Ejemplos visuales sintéticos; no hay atribución anuncio→pago implementada. Guardar una UTM no prueba la unión. |
-| Refresco cada15segundos del panel personal | Aquí se actualiza al abrir, cambiar rango o pulsar Actualizar; proveedores con caché60s por proceso. No hay refresco automático15s. |
+| Refresco cada 15 segundos del panel personal | Aquí se actualiza al abrir, cambiar rango o pulsar Actualizar; proveedores con caché de 60 s por proceso. No hay refresco automático cada 15 s. |
 | Avisos de ventas en celular | No incluidos. Necesitan integración, privacidad, idempotencia y permiso de notificaciones. |
 | Contraseña aleatoria | El CLI pide que elijas una contraseña; generala con tu gestor y pegala solo en la terminal privada. |
 

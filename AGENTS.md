@@ -4,6 +4,8 @@ Este proyecto es un dashboard privado de un dueño por instalación, con una dem
 
 ## Recorrido
 
+**Para construir o adaptar una instalación, seguí [docs/build-guide.md](docs/build-guide.md).** Es la secuencia canónica: conservar copia → demo → oferta/métricas → diseño → contrato/adaptador → base/origen → verificar/publicar y completar acceso → conectar/conciliar → operar. Retomá desde la primera etapa incompleta; no ejecutar todo de nuevo en una instalación existente.
+
 Elegí la skill por el trabajo, no cargar todas:
 
 - Negocio/demo: `.agents/skills/stats-onboarding/SKILL.md`.

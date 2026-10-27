@@ -3,21 +3,14 @@ name: stats-onboarding
 description: Configura Business Stats Kit para un negocio y guía desde la demo hasta una instalación privada con alcance y métricas definidos.
 ---
 
-Leé `AGENTS.md`, `README.md`, `docs/metrics.md` y `business.config.ts` desde la raíz de este repo. Conservá las decisiones existentes y el modo actual.
+Leé `AGENTS.md`, `README.md` y **`docs/build-guide.md`**, la secuencia canónica de construcción. Conservá las decisiones existentes y retomá desde la primera etapa incompleta; no cargues todas las skills ni repitas setups ya hechos.
 
-1. Inspeccioná configuración y entorno por presencia de variables, sin imprimir valores secretos. Si el usuario está empezando, usá `npm run demo:setup` (no sobrescribe `.env.local`), `npm run doctor` y arrancá la demo; verificá que sea sintética.
-2. Pedí solo lo que falte para definir el negocio: nombre, moneda, zona horaria, pregunta prioritaria, pasarela, cuentas de publicidad y evento de valor. No supongas que cuenta = negocio. Los IDs de scope pueden ingresarse en configuración; las claves nunca en el chat.
-3. Configurá `business.config.ts` usando sus tipos y validación reales. No copies productos, clientes ni cuentas de otra instalación. No cambies las fórmulas al cambiar la apariencia.
-4. Guardá una ficha sin secretos en `docs/business.md`: pregunta, definiciones, fuentes, exclusiones, moneda/zona, decisión de estilo y pendientes. Diferenciá decidido, configurado y verificado.
-5. Para pasar a real, seguí `docs/security.md` y `docs/integrations.md`: `npm run db:setup`, alta por `auth:setup` y `doctor -- --database` antes de conectar datos. Delegá el ingreso de contraseña y token de alta a la persona mediante la terminal/interfaz prevista. La falta de credenciales es un pendiente, no motivo para relajar el acceso.
-6. Conectá una fuente por vez con `stats-connect-sources`. Verificá el arranque y reportá lo que el usuario ya puede hacer, la evidencia y los siguientes pasos concretos.
+1. Identificá copia, rama, remoto y estado. Si sólo hay una URL, prepará una carpeta nueva o la copia propia del alumno, sin sobrescribir instalaciones ni asumir permiso para publicar en el repo original. Sin terminal/archivos, explicá el límite: leer el enlace no instala nada.
+2. En una copia nueva: `npm ci`, `npm run demo:setup`, `npm run doctor`, `npm run dev`. Verificá la etiqueta DEMO en `http://localhost:4321`. `demo:setup` conserva archivos existentes; no bajar una instalación live a demo para ocultar un fallo.
+3. Pedí sólo lo que falte: una oferta, moneda/zona, pregunta prioritaria, pasarela, publicidad y evento de valor. Elegí la receta de negocio en `docs/recipes/`. Clasificá necesidades como incluida/requiere adaptación/no necesaria. No presentar Mercado Pago, Resend, UTM o notificaciones como conectores implementados.
+4. Guardá decisiones, métricas, fuentes, exclusiones y pendientes en `.local/business.md`, comprobando primero que Git lo ignore, o en una ubicación privada fuera del checkout; nunca secretos ni registros personales. No crear `docs/business.md` con información privada en el template. Configurá `business.config.ts` con scope demostrado y sin claves.
+5. Elegí diseño sintético con `stats-design`. Para fuentes existentes, `stats-connect-sources`; para desarrollo nuevo, `stats-adapter`. Primero contrato/fixtures y pruebas; después acceso protegido, conexión y conciliación con `stats-reconcile`.
+6. Seguí las etapas de base/acceso de `docs/build-guide.md` y `docs/security.md`. Diferenciá local y dominio final; una passkey local no valida el origen final. El dueño ingresa contraseña y bootstrap en privado. No ejecutar reset para reanudar una instalación. Credenciales o interacción física faltantes son pendientes concretos, no motivo para relajar acceso.
+7. Para publicación y operación, respetá el destino autorizado y las pruebas de `stats-security`/`stats-maintenance`. No crear suscripciones, desplegar ni modificar sistemas externos por inferencia del onboarding. Si ya existe autorización concreta, continuar sin confirmaciones repetidas.
 
-No crear suscripciones de infraestructura, publicar ni modificar sistemas externos por inferencia del onboarding. Si el usuario ya autorizó una acción concreta, ejecutala dentro de ese alcance sin repetir confirmaciones rutinarias.
-
-## Empezar con solo el enlace
-
-Si todavía no hay checkout, identificá la carpeta destino y cloná la URL pública proporcionada sin sobrescribir una carpeta existente. Abrí el proyecto y leé sus instrucciones antes de instalar. No hace falta que el alumno copie archivos uno por uno. Si ya existe una instalación, preservá `.env.local`, rama y cambios locales; no ejecutar setup como si fuese nueva.
-
-Arrancá con una oferta y elegí solo la receta relevante: `docs/recipes/saas.md`, `course.md`, `pdf.md` o `services.md`. Las rutas son relativas a `docs/recipes/`. Diferenciá funciones incluidas de adaptaciones: el template no trae Mercado Pago, notificaciones de ventas, recordatorios, atribución UTM completa ni apertura de PDFs. El refresco del kit no promete la frecuencia del dashboard del instructor.
-
-Aceptación del onboarding: demo abierta y etiquetada; ficha del negocio con fórmula/fuente por métrica; estilo elegido; matriz «incluido / requiere adaptación / no necesario»; modo live solo con acceso verificado. Cada paso debe terminar con resultado observable o bloqueo concreto, no con «configurado» sin prueba. No cerrar como listo para producción por un build.
+Aceptación: demo observada, ficha recuperable, estilo elegido, alcance por fuente y evidencia diferenciada entre configuración, mocks y cuenta real. Cada etapa termina con resultado observable o bloqueo concreto. La ausencia de credenciales no impide completar diseño y código comprobables localmente; un build no acredita seguridad ni conciliación en producción.
